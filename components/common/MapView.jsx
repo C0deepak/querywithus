@@ -63,7 +63,8 @@ export default function MapView({ selected }) {
                     latitude: lat,
                     zoom: 12,
                 }}
-                mapStyle="https://tiles.stadiamaps.com/styles/osm_bright.json"
+                // mapStyle="https://tiles.stadiamaps.com/styles/osm_bright.json"
+                mapStyle="https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                 style={{ width: '100%', height: '100%' }}
             >
                 <Marker longitude={lng} latitude={lat} anchor="bottom">
