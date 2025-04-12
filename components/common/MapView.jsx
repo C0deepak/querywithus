@@ -1,44 +1,16 @@
-// import React from 'react';
-// import Map, { Marker } from 'react-map-gl/maplibre';
-// import 'maplibre-gl/dist/maplibre-gl.css';
-
-// function MapView({ selected }) {
-//     if (!selected?.coordinates) return null;
-
-//     const [lat, lng] = selected.coordinates;
-
-//     return (
-//         <div style={{ height: '100vh', width: '100%' }}>
-//             <Map
-//                 initialViewState={{
-//                     longitude: lng,
-//                     latitude: lat,
-//                     zoom: 12,
-//                 }}
-//                 style={{ width: '100%', height: '100%' }}
-//                 mapStyle="https://tiles.stadiamaps.com/styles/osm_bright.json"
-//             >
-//                 <Marker longitude={lng} latitude={lat}>
-//                     {/* Customize marker here if needed */}
-//                     <div style={{ color: 'red', fontSize: '24px' }}>📍</div>
-//                 </Marker>
-//             </Map>
-//         </div>
-//     );
-// }
-
-// export default MapView;
-
 'use client';
 
 import Map, { Marker, Popup } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef, useState } from 'react';
-import { MapPin } from 'lucide-react';
 
 export default function MapView({ selected }) {
     const mapRef = useRef(null);
     const [popupOpen, setPopupOpen] = useState(false);
+    const defaultCoordinates = [11.6234, 92.7265];;
+
+    const coordinates = selected?.coordinates || defaultCoordinates;
+    const [lat, lng] = coordinates;
 
     useEffect(() => {
         if (selected?.coordinates && mapRef.current) {
@@ -48,12 +20,6 @@ export default function MapView({ selected }) {
         }
     }, [selected]);
 
-    if (!selected?.coordinates) {
-        return <div className="h-screen w-full bg-gray-100" />;
-    }
-
-    const [lat, lng] = selected.coordinates;
-
     return (
         <div className="h-screen w-full">
             <Map
@@ -61,10 +27,11 @@ export default function MapView({ selected }) {
                 initialViewState={{
                     longitude: lng,
                     latitude: lat,
-                    zoom: 12,
+                    zoom: selected ? 13 : 8,
                 }}
-                // mapStyle="https://tiles.stadiamaps.com/styles/osm_bright.json"
-                mapStyle="https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                // mapStyle={`https://tiles.stadiamaps.com/styles/osm_bright.json`}
+                mapStyle={`https://tiles.stadiamaps.com/styles/osm_bright.json?api_key=${process.env.NEXT_PUBLIC_STADIA_MAPS_API_KEY}`}
+                // mapStyle="https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                 style={{ width: '100%', height: '100%' }}
             >
                 <Marker longitude={lng} latitude={lat} anchor="bottom">
@@ -80,7 +47,7 @@ export default function MapView({ selected }) {
                         closeOnClick={false}
                         onClose={() => setPopupOpen(false)}
                     >
-                        <div className="text-sm">
+                        <div className="text-sm rounded">
                             <div className="font-semibold">{selected.name}</div>
                             <div className="text-muted-foreground text-xs capitalize">
                                 {selected.type.replace('_', ' ')}
